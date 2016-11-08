@@ -26,12 +26,24 @@ namespace Common
 {
 
 //------------------------------------------------------------------------------
+/// <summary>
+/// An exception class that may serve as a base for exceptions in a project or
+/// group of projects.
+///
+/// Offers use of the handy dandy __FILE__ and __LINE__ macros
+///
+/// A typical exception can be declared like:
+/// throw Common::Exception(__FILE__, __LINE__, "File was missing");
+/// </summary>
 class COMMON_API Exception : public std::runtime_error
 {
 public:
-    Exception(const char * filePath, unsigned int line, const std::string & what_arg);
+    Exception(const char * filePath
+            , unsigned int line
+            , const std::string & what_arg
+            , boost::posix_time::ptime = boost::posix_time::microsec_clock::local_time());
     Exception(const Exception & rhs);
-    const Exception & operator = (const Exception & rhs);
+    const Exception & operator = (const Exception & rhs) = delete;
     ~Exception();
 
     const std::string & GetFilePath();
