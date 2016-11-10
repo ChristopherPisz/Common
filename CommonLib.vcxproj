@@ -158,6 +158,7 @@
     <ClInclude Include="Exception.h" />
     <ClInclude Include="FilesAndDirectories.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="StringUtility.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
@@ -179,6 +180,7 @@
     <ClCompile Include="Exception.cpp" />
     <ClCompile Include="FilesAndDirectories.cpp" />
     <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="StringUtility.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

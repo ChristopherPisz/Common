@@ -47,23 +47,12 @@ TEST_F(ExceptionTests, FilePathTest)
     catch(Common::Exception & e)
     {
         // Get path of the current running module
-        std::string expectedPath = Common::GetModuleDirectory();
+        std::string expectedPath = Common::GetModuleDirectoryA();
 
         // Travel up two directories
         // We assume the orginal project settings for output directory and source locations
-        std::string::size_type lastSlash = expectedPath.find_last_of('\\');
-
-        if( lastSlash != std::string::npos )
-        {
-            expectedPath = expectedPath.substr(0, lastSlash);
-        }
-
-        lastSlash = expectedPath.find_last_of('\\');
-
-        if( lastSlash != std::string::npos )
-        {
-            expectedPath = expectedPath.substr(0, lastSlash);
-        }
+        expectedPath = Common::GetParentDirectory(expectedPath);
+        expectedPath = Common::GetParentDirectory(expectedPath);
 
         expectedPath += "\\Unit Tests\\ExceptionTest.cpp";
         std::transform(expectedPath.begin(), expectedPath.end(), expectedPath.begin(), ::tolower);
@@ -89,7 +78,7 @@ TEST_F(ExceptionTests, LineTest)
     }
     catch(Common::Exception & e)
     {
-        const unsigned expectedLine = 88;
+        const unsigned expectedLine = 77;
         unsigned resultLine = e.GetLine();
         
         EXPECT_EQ(expectedLine, resultLine);
