@@ -9,47 +9,26 @@
 // Just a garbage console application to do some manual testing.
 int main()
 {
-    const std::string test1 = "D:\\Programing Projects\\Git Workspace\\Common\\x64\\Debug";
-    const std::string test2 = "D:\Programing Projects\\Git Workspace\\Common\\x64\\Debug\\";
-    const std::string test3 = "D:/Programing Projects/Git Workspace/Common/x64/Debug";
-    const std::string test4 = "D:/Programing Projects/Git Workspace/Common/x64/Debug/";
+    boost::filesystem::path();
+    boost::filesystem::path path1("C://PATH");
+    boost::filesystem::path path2("C:/PATH");
+    boost::filesystem::path path3("C:\\PATH");
+    boost::filesystem::path path4("\\PATH");
+    boost::filesystem::path path5("/PATH");
+    boost::filesystem::path path6("//PATH");
+    boost::filesystem::path path7("#?!NotAPath#?!");
+    boost::filesystem::path path8("\\");
+    boost::filesystem::path path9("/");
 
-    if (!boost::filesystem::native(test1))
-    {
-        std::cout << "Boost says the following path is not valid for the native operating system: " << test1 << std::endl;
-    }
-
-    if (!boost::filesystem::native(test2))
-    {
-        std::cout << "Boost says the following path is not valid for the native operating system: " << test2 << std::endl;
-    }
-
-    if (!boost::filesystem::native(test3))
-    {
-        std::cout << "Boost says the following path is not valid for the native operating system: " << test3 << std::endl;
-    }
-
-    if (!boost::filesystem::native(test4))
-    {
-        std::cout << "Boost says the following path is not valid for the native operating system: " << test4 << std::endl;
-
-    }
-
-    const char * temp = reinterpret_cast<const char *>(L"D:\\Programing Projects\\Git Workspace\\Common\\x64\\Debug");
-    if (!boost::filesystem::native(temp))
-    {
-        std::cout << "Boost says the following path is not valid for the native operating system: " << temp << std::endl;
-
-    }
-
-    std::cout << boost::filesystem::native("C://PATH") << std::endl;
-    std::cout << boost::filesystem::native("C:/PATH") << std::endl;
-    std::cout << boost::filesystem::native("C:\\PATH") << std::endl;
-    std::cout << boost::filesystem::native("C:\PATH") << std::endl;
-    std::cout << boost::filesystem::native("\PATH") << std::endl;
-    std::cout << boost::filesystem::native("\\PATH") << std::endl;
-    std::cout << boost::filesystem::native("/PATH") << std::endl;
-    std::cout << boost::filesystem::native("//PATH") << std::endl;
+    std::cout << path1.parent_path() << std::endl;
+    std::cout << path2.parent_path() << std::endl;
+    std::cout << path3.parent_path() << std::endl;
+    std::cout << path4.parent_path() << std::endl;
+    std::cout << path5.parent_path() << std::endl;
+    std::cout << path6.parent_path() << std::endl;
+    std::cout << path7.parent_path() << std::endl;
+    std::cout << path8.parent_path() << std::endl;
+    std::cout << path9.parent_path() << std::endl;
 
     return 0;
 }

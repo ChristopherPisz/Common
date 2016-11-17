@@ -86,20 +86,22 @@ std::wstring GetModuleDirectoryW()
 //--------------------------------------------------------------------------------------------------
 std::string GetParentDirectory(const std::string & path)
 {
-    /* TODO - This seems to be broken. Trying to figure out what's wrong with filesystem::native or the input to it
-    // Check that the path is a valid syntax for the native operating system
-    if (!boost::filesystem::native(path))
+    if( path.empty() )
     {
-        // Error - The path is invalid for the native operating system
-        std::ostringstream msg("The path is invalid for the native operating system. Path: ");
-        msg << path;
-
-        throw(__FILE__, __LINE__, msg.str());
+        return std::string();
     }
-    */
 
-    // Boost has some handy methods for paths
-    boost::filesystem::path boostPath(path);
+    // Remove any trailing slashes
+    std::string cleanPath(path);
+
+    if (cleanPath.back() == '\\' ||
+        cleanPath.back() == '/')
+    {
+        cleanPath.pop_back();
+    }
+
+    // Get the parent directory using boost
+    boost::filesystem::path boostPath(cleanPath);
 
     if( !boostPath.has_parent_path() )
     {
@@ -127,37 +129,29 @@ std::string GetParentDirectory(const std::string & path)
     }
 
     // There was no directory in the given path
-    return path;
+    return std::string();
     */
 }
 
 //--------------------------------------------------------------------------------------------------
 std::wstring GetParentDirectory(const std::wstring & path)
 {
-    // Check that the path is a valid syntax for the native operating system
-    std::string narrowPath;
-
-    try
+    if( path.empty() )
     {
-        narrowPath = Common::WideToMultibyte(path);
-    }
-    catch(Common::Exception &)
-    {
-        const std::string msg("Could not convert path to narrow string using system default locale");
-        throw (__FILE__, __LINE__, msg);
+        return std::wstring();
     }
 
-    if ( !boost::filesystem::native(narrowPath) )
-    {
-        // Error - The path is invalid for the native operating system
-        std::ostringstream msg("The path is invalid for the native operating system. Path: ");
-        msg << narrowPath;
+    // Remove any trailing slashes
+    std::wstring cleanPath(path);
 
-        throw(__FILE__, __LINE__, msg.str());
+    if (cleanPath.back() == '\\' ||
+        cleanPath.back() == '/')
+    {
+        cleanPath.pop_back();
     }
 
-    // Boost has some handy methods for paths
-    boost::filesystem::path boostPath(path);
+    // Get the parent directory using boost
+    boost::filesystem::path boostPath(cleanPath);
 
     if( !boostPath.has_parent_path() )
     {
@@ -192,16 +186,15 @@ std::wstring GetParentDirectory(const std::wstring & path)
 //--------------------------------------------------------------------------------------------------
 bool IsDirectory(const std::string & path)
 {
-
-
-
-
     // Check for empty path
     if (path.empty())
     {
         return false;
     }
 
+    return boost::filesystem::is_directory(path);
+
+    /*
     // Get the attibutes from Windows
     DWORD attributes = GetFileAttributesA(path.c_str());
 
@@ -211,6 +204,7 @@ bool IsDirectory(const std::string & path)
     }
 
     return (attributes & FILE_ATTRIBUTE_DIRECTORY) == FILE_ATTRIBUTE_DIRECTORY;
+    */
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -222,6 +216,9 @@ bool IsDirectory(const std::wstring & path)
         return false;
     }
 
+    return boost::filesystem::is_directory(path);
+
+    /*
     // Get the attibutes from Windows
     DWORD attributes = GetFileAttributesW(path.c_str());
 
@@ -231,6 +228,7 @@ bool IsDirectory(const std::wstring & path)
     }
 
     return (attributes & FILE_ATTRIBUTE_DIRECTORY) == FILE_ATTRIBUTE_DIRECTORY;
+    */
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -242,6 +240,9 @@ bool IsFile(const std::string & path)
         return false;
     }
 
+    return boost::filesystem::is_regular_file(path);
+
+    /*
     // Get the attibutes from Windows
     DWORD attributes = GetFileAttributesA(path.c_str());
 
@@ -253,6 +254,7 @@ bool IsFile(const std::string & path)
     // If we did not get INVALID_FILE_ATTRIBUTES, then it is either a directory or a file
     // If it isn't a directory, then it's a file
     return (attributes & FILE_ATTRIBUTE_DIRECTORY) == 0;
+    */
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -264,10 +266,9 @@ bool IsFile(const std::wstring & path)
         return false;
     }
 
-    boost::filesystem::is_regular_file(path);
-    boost::filesystem::status(path);
+    return boost::filesystem::is_regular_file(path);
 
-
+    /*
     // Get the attibutes from Windows
     DWORD attributes = GetFileAttributesW(path.c_str());
 
@@ -279,6 +280,7 @@ bool IsFile(const std::wstring & path)
     // If we did not get INVALID_FILE_ATTRIBUTES, then it is either a directory or a file
     // If it isn't a directory, then it's a file
     return (attributes & FILE_ATTRIBUTE_DIRECTORY) == 0;
+    */
 }
 
 //--------------------------------------------------------------------------------------------------
