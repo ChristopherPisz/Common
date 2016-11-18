@@ -88,36 +88,35 @@ TEST_F(FileAndDirectoryTests, GetParentDirectory)
 //--------------------------------------------------------------------------------------------------
 TEST_F(FileAndDirectoryTests, IsDirectory)
 {
-    std::string path = Common::GetModuleDirectoryA();
-    EXPECT_TRUE(Common::IsDirectory(path));
-
-    // Travel up two directories
-    // We assume the orginal project settings for output directory and source locations
-    path = Common::GetParentDirectory(path);
-    path = Common::GetParentDirectory(path);
-
-    path += "\\Unit Tests\\FileAndDirectoryTest.cpp";
-    EXPECT_FALSE(Common::IsDirectory(path));
-
     std::string path1 = "C:";
     std::string path2 = "C:\\";
     std::string path3 = "C:\\Windows";
     std::string path4 = "C:\\Windows\\";
+    std::string path5 = "C:\\Windows\\notepad.exe";
+    std::string path6 = "C:\\Windows\\notepad.exe\\";
 
     EXPECT_TRUE(Common::IsDirectory(path1));
     EXPECT_TRUE(Common::IsDirectory(path2));
     EXPECT_TRUE(Common::IsDirectory(path3));
     EXPECT_TRUE(Common::IsDirectory(path4));
+
+    EXPECT_FALSE(Common::IsDirectory(path5));
+    EXPECT_FALSE(Common::IsDirectory(path6));
 
     path1 = "C:";
     path2 = "C:/";
     path3 = "C:/Windows";
     path4 = "C:/Windows/";
+    path5 = "C:/Windows/notepad.exe";
+    path5 = "C:/Windows/notepad.exe/";
 
     EXPECT_TRUE(Common::IsDirectory(path1));
     EXPECT_TRUE(Common::IsDirectory(path2));
     EXPECT_TRUE(Common::IsDirectory(path3));
     EXPECT_TRUE(Common::IsDirectory(path4));
+
+    EXPECT_FALSE(Common::IsDirectory(path5));
+    EXPECT_FALSE(Common::IsDirectory(path6));
 
     path1 = "C:\\*";
     path2 = "C:/*";
@@ -131,26 +130,45 @@ TEST_F(FileAndDirectoryTests, IsDirectory)
 //--------------------------------------------------------------------------------------------------
 TEST_F(FileAndDirectoryTests, IsFile)
 {
-    std::string path = Common::GetModuleDirectoryA();
-    EXPECT_FALSE(Common::IsFile(path));
-
-    // Travel up two directories
-    // We assume the orginal project settings for output directory and source locations
-    path = Common::GetParentDirectory(path);
-    path = Common::GetParentDirectory(path);
-
-    std::string path1 = path + "\\Unit Tests\\FileAndDirectoryTest.cpp";
-    std::string path2 = "C:\\";
+	std::string path1 = "C:";
+	std::string path2 = "C:\\";
     std::string path3 = "C:\\Windows";
     std::string path4 = "C:\\Windows\\";
+	std::string path5 = "C:\\Windows\\notepad.exe";
+	std::string path6 = "C:\\Windows\\notepad.exe\\";
 
-    EXPECT_TRUE(Common::IsFile(path));
+    EXPECT_FALSE(Common::IsFile(path1));
+    EXPECT_FALSE(Common::IsFile(path2));
+    EXPECT_FALSE(Common::IsFile(path3));
+    EXPECT_FALSE(Common::IsFile(path4));
 
-    path = "C:\\";
-    EXPECT_FALSE(Common::IsFile(path));
+    EXPECT_TRUE(Common::IsFile(path5));
+    
+    EXPECT_FALSE(Common::IsFile(path6));
 
-    path = "C:\\*";
-    EXPECT_FALSE(Common::IsFile(path));
+	path2 = "C:/";
+	path3 = "C:/Windows";
+	path4 = "C:/Windows/";
+	path5 = "C:/Windows/notepad.exe";
+    path6 = "C:/Windows/notepad.exe/";
+
+    EXPECT_FALSE(Common::IsFile(path2));
+    EXPECT_FALSE(Common::IsFile(path3));
+    EXPECT_FALSE(Common::IsFile(path4));
+
+    EXPECT_TRUE(Common::IsFile(path5));
+
+    EXPECT_FALSE(Common::IsFile(path6));
+
+    path2 = "*";
+    path3 = "C:\\*";
+    path4 = "C:/*";
+    path5 = "#?!Gibberish!?#";
+
+    EXPECT_FALSE(Common::IsFile(path2));
+    EXPECT_FALSE(Common::IsFile(path3));
+    EXPECT_FALSE(Common::IsFile(path4));
+    EXPECT_FALSE(Common::IsFile(path5));
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -165,17 +183,22 @@ TEST_F(FileAndDirectoryTests, MakeDirectory)
     path = Common::GetParentDirectory(path);
 
     // Make the directory
-    path += "\\Unit Tests\\Temp";
-    Common::MakeDirectory(path);
+    std::string path1 = path  + "\\Unit Tests\\Temp";
+    std::string path2 = path1 + "\\*?#WhatWhat*!?";
 
-    EXPECT_TRUE(Common::IsDirectory(path));
+    Common::MakeDirectory(path1);
+    EXPECT_THROW(Common::MakeDirectory(path2); , Common::Exception);
 
-    // Attempt to make a directory using an invalid path
-    path += "\\*?#WhatWhat*!?";
+    EXPECT_TRUE(Common::IsDirectory(path1));
+    EXPECT_FALSE(Common::IsDirectory(path2));
 
-    EXPECT_THROW(Common::MakeDirectory(path);, Common::Exception);
-    EXPECT_FALSE(Common::IsDirectory(path));
+    // Make a directory that already exists
+    Common::MakeDirectory(path1);
+
+    EXPECT_TRUE(Common::IsDirectory(path1));
 
     // Delete the directory
+    Common::DeleteDirectory(path1);
+    EXPECT_FALSE(Common::IsDirectory(path1));
 }
 

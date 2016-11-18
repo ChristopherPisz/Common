@@ -234,7 +234,7 @@ bool IsDirectory(const std::wstring & path)
 //--------------------------------------------------------------------------------------------------
 bool IsFile(const std::string & path)
 {
-    // Check for empty path
+    // Check for an empty path
     if (path.empty())
     {
         return false;
