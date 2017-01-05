@@ -62,10 +62,12 @@ COMMON_API bool IsFile(const std::wstring & path);
 /// throws if unable to crate a directory at the specified path.
 /// </exception>
 COMMON_API void MakeDirectory(const std::string & path);
+COMMON_API void MakeDirectory(const std::wstring & path);
 
 /// <summary>
 /// </summary>
 COMMON_API void DeleteDirectory(const std::string & path);
+COMMON_API void DeleteDirectory(const std::wstring & path);
 
 //--------------------------------------------------------------------------------------------------
 } // End namespace

@@ -10,16 +10,19 @@ Dependecies:
 ) C++ runtime
 All projects were compiled with the DLL versions of the runtime. That is /MD and MDd
 
-) Boost
-The projects are expecting to find the boost 1.62 headers installed at
-$(SolutionDir)../../Third Party/boost_1_62_0/boost
+) Boost Library  
+You can grab boost from http://www.boost.org/  
 
-The projects are expecting to find the boost 1.62 libraries installed at
-$(SolutionDir)../../Third Party/boost_1_62_0/lib32-msvc-14.0
-$(SolutionDir)../../Third Party/boost_1_62_0/lib64-msvc-14.0
+Preprocessor Definition BOOST_ALL_DYN_LINK  
+Expects headers at $(SolutionDir)..\..\Third Party\boost_1_62_0  
+Expects Libraries at $(SolutionDir)..\..\Third Party\boost_1_62_0\lib64-msvc-14.0  
 
-Feel free to alter the project settings for additional header directories and/or additional library directories to point to your boost installation.
-It doesn't necessariy need 1.62, but that's what I developed and tested with.
+Copies each needed dll using post build event, defined for each configuration.  
+For example, using the date_time library:  
+xcopy /y /d "$(SolutionDir)..\..\Third Party\boost_1_62_0\lib32-msvc-14.0\boost_date_time-vc140-mt-1_*.dll" "$(OutDir)"  
+xcopy /y /d "$(SolutionDir)..\..\Third Party\boost_1_62_0\lib32-msvc-14.0\boost_date_time-vc140-mt-gd*.dll" "$(OutDir)"  
+xcopy /y /d "$(SolutionDir)..\..\Third Party\boost_1_62_0\lib64-msvc-14.0\boost_date_time-vc140-mt-1_*.dll" "$(OutDir)"  
+xcopy /y /d "$(SolutionDir)..\..\Third Party\boost_1_62_0\lib64-msvc-14.0\boost_date_time-vc140-mt-gd*.dll" "$(OutDir)"  
 
 ) GTest
 The projects are expecting to find the gtest 1.8.0 headers installed at

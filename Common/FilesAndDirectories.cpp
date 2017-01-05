@@ -310,60 +310,35 @@ void MakeDirectory(const std::string & path)
         // Use our own exception type
         throw Common::Exception(__FILE__, __LINE__, msg.str());
     }
+}
 
-    /*
-    if( path.empty() )
+//--------------------------------------------------------------------------------------------------
+void MakeDirectory(const std::wstring & path)
+{
+    try
     {
-        const std::string msg("Path is empty");
-        throw Common::Exception(__FILE__, __LINE__, msg);
+        // Creates all directories in the path if they do not exist
+        boost::filesystem::create_directories(path);
     }
-
-    if( path.size() > MAX_PATH )
+    catch (boost::filesystem::filesystem_error & e)
     {
-        const std::string msg("Path size is greater than MAX_PATH");
-        throw Common::Exception(__FILE__, __LINE__, msg);
+        // Maybe I am missing something, but getting error information out of boost::filesystem seems to be a bitch
+        //
+        // The codes are found in boost::system::errc::<your code here>
+        // Try and get the value and then find the Windows codes mapped to the boost codes.
+        // The actual numeric value can be found in the header with the Windows codes - errno.h under _CRT_NO_POSIX_ERROR_CODES.
+        //
+        // You'll have to compare against specific ones and make your own meaningful error message.
+        const boost::system::error_code & errorCode = e.code();
+
+        // TODO - Add switch for meaningful codes, handle, and make manual error messages       
+        std::ostringstream msg;
+        msg << "boost::filesystem::create_directories failed with message: '" << (errorCode.message().empty() ? "<empty>" : errorCode.message()) << "'";
+        msg << " and error code: '" << errorCode << "'";
+
+        // Use our own exception type
+        throw Common::Exception(__FILE__, __LINE__, msg.str());
     }
-
-    // Simplify by only dealing with one type of slash
-    std::string cleanPath = Common::ReplaceAllOccurances(path, "/", "\\");
-
-    // If the path does not end with a slash, append one
-    if (cleanPath.back() != '\\')
-    {
-        cleanPath += "\\";
-    }
-
-    // Iterate through the directories in the path
-    size_t index = 0;
-    while( index != std::string::npos && index < cleanPath.size() )
-    {
-        index = cleanPath.find_first_of("\\", index);
-
-        // Check if we found a directory seperator
-        if( index == std::string::npos )
-        {
-            continue;
-        }
-
-        // Check if the ancestor directory already exists
-        const std::string currentDirectory = cleanPath.substr(0, index);
-
-        if( !IsDirectory(currentDirectory) )
-        {
-            if (!CreateDirectoryA(currentDirectory.c_str(), NULL))
-            {
-                DWORD errorCode = GetLastError();
-                std::ostringstream msg("CreateDirectory failed with error code ");
-                msg << errorCode << " when called with argument: " << currentDirectory;
-
-                throw Common::Exception(__FILE__, __LINE__, msg.str());
-            }
-        }
-
-        // Next search
-        ++index;
-    }
-    */
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -381,6 +356,34 @@ void DeleteDirectory(const std::string & path)
        boost::filesystem::remove_all(path);
     }
     catch(boost::filesystem::filesystem_error & e)
+    {
+        const boost::system::error_code & errorCode = e.code();
+
+        // TODO - Add switch for meaningful codes, handle, and make manual error messages       
+        std::ostringstream msg;
+        msg << "boost::filesystem::remove_all failed with message: '" << (errorCode.message().empty() ? "<empty>" : errorCode.message()) << "'";
+        msg << " and error code: '" << errorCode << "'";
+
+        // Use our own exception type
+        throw Common::Exception(__FILE__, __LINE__, msg.str());
+    }
+}
+
+//--------------------------------------------------------------------------------------------------
+void DeleteDirectory(const std::wstring & path)
+{
+    if (!Common::IsDirectory(path))
+    {
+        const std::string msg("Path is not a valid directory");
+        throw Common::Exception(__FILE__, __LINE__, msg);
+    }
+
+    try
+    {
+        // Removes the directory, its subdirectories, and all their contents
+        boost::filesystem::remove_all(path);
+    }
+    catch (boost::filesystem::filesystem_error & e)
     {
         const boost::system::error_code & errorCode = e.code();
 
