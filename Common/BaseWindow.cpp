@@ -46,7 +46,7 @@ BaseWindow::~BaseWindow()
 }
 
 //-----------------------------------------------------------------------------
-void BaseWindow::Init(HINSTANCE instance, HWND parent, HMENU menu, int x, int y, int width, int height)
+HWND BaseWindow::Init(HINSTANCE instance, HWND parent, HMENU menu, int x, int y, int width, int height)
 {
    m_wndclass.lpszClassName = m_className.c_str();
    m_wndclass.hInstance     = instance;
@@ -75,6 +75,8 @@ void BaseWindow::Init(HINSTANCE instance, HWND parent, HMENU menu, int x, int y,
       DWORD err = GetLastError();
       throw Exception(__FILE__, __LINE__, "Failed to create window");
    }
+
+   return m_hwnd;
 }
 
 //-----------------------------------------------------------------------------

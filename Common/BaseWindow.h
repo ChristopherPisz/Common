@@ -58,9 +58,11 @@ public:
    * @param width - desired width of the window
    * @param height - desired height of the window
    *
+   * @return - handle to the window that was crteated
+   *
    * @throws BaseException - if there was a problem creating the window
    **/
-   void Init(HINSTANCE instance, HWND parent, HMENU menu, int x, int y, int width, int height);
+   HWND Init(HINSTANCE instance, HWND parent, HMENU menu, int x, int y, int width, int height);
    
    /**
    * Runs a loop that dispatches window messages until a quit message is received
