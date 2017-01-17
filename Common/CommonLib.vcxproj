@@ -154,6 +154,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="BaseModalDialog.h" />
+    <ClInclude Include="BaseWindow.h" />
     <ClInclude Include="CommonLib.h" />
     <ClInclude Include="Exception.h" />
     <ClInclude Include="FilesAndDirectories.h" />
@@ -163,6 +165,8 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BaseModalDialog.cpp" />
+    <ClCompile Include="BaseWindow.cpp" />
     <ClCompile Include="CommonLib.cpp" />
     <ClCompile Include="dllmain.cpp">
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</CompileAsManaged>
