@@ -70,7 +70,7 @@ public:
    *
    * @throws BaseException - if the window has not yet been created
    **/
-   virtual int Run();
+   virtual int Run(bool show);
 
 protected:
    

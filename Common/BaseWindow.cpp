@@ -80,35 +80,38 @@ HWND BaseWindow::Init(HINSTANCE instance, HWND parent, HMENU menu, int x, int y,
 }
 
 //-----------------------------------------------------------------------------
-int BaseWindow::Run()
+int BaseWindow::Run(const bool show)
 {
-   // Check if the window has been created
-   if( !m_hwnd )
-   {
-      throw Exception(__FILE__, __LINE__, "Window has not yet been created.");
-   }
+    // Check if the window has been created
+    if( !m_hwnd )
+    {
+        throw Exception(__FILE__, __LINE__, "Window has not yet been created.");
+    }
 
-   ShowWindow(m_hwnd, SW_SHOWNORMAL);
-   m_active = true;
+    if( show )
+    {
+        ShowWindow(m_hwnd, SW_SHOWNORMAL);
+    }
 
-   // Process window messages until the application is exited
-   MSG msg;                         // Windows message 
+    m_active = true;
 
-   while(true)
-   {
-      if(PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
-      {
-         if(msg.message == WM_QUIT)
-         {
-            break;
-         }
+    // Process window messages until the application is exited
+    MSG  msg;                         // Windows message 
+    BOOL result;
 
-         TranslateMessage(&msg);		// Translate any accelerator keys
-         DispatchMessage(&msg);		// Send the message to event handler
-      }
-   }
+    while(result = GetMessage(&msg, m_hwnd, 0, 0) != 0 )
+    {
+        if( result == -1 )
+        {
+            // Error - Window handle is not valid
+            throw Common::Exception(__FILE__, __LINE__, "Window handle is not valid.");
+        }
 
-   return(static_cast<int>(msg.wParam));
+        TranslateMessage(&msg);    // Translate any accelerator keys
+        DispatchMessage(&msg);	    // Send the message to event handler
+    }
+
+    return(static_cast<int>(msg.wParam));
 }
 
 //-----------------------------------------------------------------------------
