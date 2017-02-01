@@ -1,4 +1,8 @@
 
+/*
+* We cannot cal this string.h because string.h already exists (<string>)
+*/
+
 // Project Includes
 
 // Common Library
