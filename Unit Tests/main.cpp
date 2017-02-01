@@ -2,13 +2,16 @@
 // GTest Includes
 #include <gtest/gtest.h>
 
+// Common Library Includes
+#include "Threads.h"
 
 //--------------------------------------------------------------------------------------------------
 int main(int argc, char **argv)
 {
-  ::testing::InitGoogleTest(&argc, argv);
+    Common::SetCurrentThreadName("Main");
 
-  return RUN_ALL_TESTS();
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
 }
 
 //--------------------------------------------------------------------------------------------------
