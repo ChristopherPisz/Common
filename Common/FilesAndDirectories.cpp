@@ -84,106 +84,6 @@ std::wstring GetModuleDirectoryW()
 }
 
 //--------------------------------------------------------------------------------------------------
-std::string GetParentDirectory(const std::string & path)
-{
-    if( path.empty() )
-    {
-        return std::string();
-    }
-
-    // Remove any trailing slashes
-    std::string cleanPath(path);
-
-    if (cleanPath.back() == '\\' ||
-        cleanPath.back() == '/')
-    {
-        cleanPath.pop_back();
-    }
-
-    // Get the parent directory using boost
-    boost::filesystem::path boostPath(cleanPath);
-
-    if( !boostPath.has_parent_path() )
-    {
-        return std::string();
-    }
-
-    return boostPath.parent_path().string();
-
-    /*
-    // Return the substring up to the last slash, if it exists
-
-    // Windows style path
-    size_t index = path.find_last_of("\\");
-
-    if( index != std::string::npos )
-    {
-        return path.substr(0, index);
-    }
-
-    // Unix style path
-    index = path.find_last_of("/");
-    if( index != std::string::npos )
-    {
-        return path.substr(0, index);
-    }
-
-    // There was no directory in the given path
-    return std::string();
-    */
-}
-
-//--------------------------------------------------------------------------------------------------
-std::wstring GetParentDirectory(const std::wstring & path)
-{
-    if( path.empty() )
-    {
-        return std::wstring();
-    }
-
-    // Remove any trailing slashes
-    std::wstring cleanPath(path);
-
-    if (cleanPath.back() == '\\' ||
-        cleanPath.back() == '/')
-    {
-        cleanPath.pop_back();
-    }
-
-    // Get the parent directory using boost
-    boost::filesystem::path boostPath(cleanPath);
-
-    if( !boostPath.has_parent_path() )
-    {
-        return std::wstring();
-    }
-
-    return boostPath.parent_path().wstring();
-
-    /*
-    // Return the substring up to the last slash, if it exists
-
-    // Windows style path
-    size_t index = path.find_last_of(L"\\");
-
-    if( index != std::wstring::npos )
-    {
-        return path.substr(0, index);
-    }
-
-    // Unix style path
-    index = path.find_last_of(L"/");
-    if( index != std::wstring::npos )
-    {
-        return path.substr(0, index);
-    }
-
-    // There was no directory in the given path
-    return path;
-    */
-}
-
-//--------------------------------------------------------------------------------------------------
 bool IsDirectory(const std::string & path)
 {
     // Check for empty path
@@ -193,18 +93,6 @@ bool IsDirectory(const std::string & path)
     }
 
     return boost::filesystem::is_directory(path);
-
-    /*
-    // Get the attibutes from Windows
-    DWORD attributes = GetFileAttributesA(path.c_str());
-
-    if (attributes == INVALID_FILE_ATTRIBUTES )
-    {
-        return false;
-    }
-
-    return (attributes & FILE_ATTRIBUTE_DIRECTORY) == FILE_ATTRIBUTE_DIRECTORY;
-    */
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -217,18 +105,6 @@ bool IsDirectory(const std::wstring & path)
     }
 
     return boost::filesystem::is_directory(path);
-
-    /*
-    // Get the attibutes from Windows
-    DWORD attributes = GetFileAttributesW(path.c_str());
-
-    if (attributes == INVALID_FILE_ATTRIBUTES )
-    {
-        return false;
-    }
-
-    return (attributes & FILE_ATTRIBUTE_DIRECTORY) == FILE_ATTRIBUTE_DIRECTORY;
-    */
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -241,20 +117,6 @@ bool IsFile(const std::string & path)
     }
 
     return boost::filesystem::is_regular_file(path);
-
-    /*
-    // Get the attibutes from Windows
-    DWORD attributes = GetFileAttributesA(path.c_str());
-
-    if (attributes == INVALID_FILE_ATTRIBUTES )
-    {
-        return false;
-    }
-
-    // If we did not get INVALID_FILE_ATTRIBUTES, then it is either a directory or a file
-    // If it isn't a directory, then it's a file
-    return (attributes & FILE_ATTRIBUTE_DIRECTORY) == 0;
-    */
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -267,20 +129,62 @@ bool IsFile(const std::wstring & path)
     }
 
     return boost::filesystem::is_regular_file(path);
+}
 
-    /*
-    // Get the attibutes from Windows
-    DWORD attributes = GetFileAttributesW(path.c_str());
-
-    if (attributes == INVALID_FILE_ATTRIBUTES )
+//--------------------------------------------------------------------------------------------------
+void RemoveFile(const std::string & path)
+{
+    if( !Common::IsFile(path) )
     {
-        return false;
+        const std::string msg("Path is not a valid file");
+        throw Common::Exception(__FILE__, __LINE__, msg);
     }
 
-    // If we did not get INVALID_FILE_ATTRIBUTES, then it is either a directory or a file
-    // If it isn't a directory, then it's a file
-    return (attributes & FILE_ATTRIBUTE_DIRECTORY) == 0;
-    */
+    try
+    {
+        // Removes file
+        boost::filesystem::remove(path);
+    }
+    catch( boost::filesystem::filesystem_error & e )
+    {
+        const boost::system::error_code & errorCode = e.code();
+
+        // TODO - Add switch for meaningful codes, handle, and make manual error messages       
+        std::ostringstream msg;
+        msg << "boost::filesystem::remove failed with message: '" << (errorCode.message().empty() ? "<empty>" : errorCode.message()) << "'";
+        msg << " and error code: '" << errorCode << "'";
+
+        // Use our own exception type
+        throw Common::Exception(__FILE__, __LINE__, msg.str());
+    }
+}
+
+//--------------------------------------------------------------------------------------------------
+void RemoveFile(const std::wstring & path)
+{
+    if( !Common::IsFile(path) )
+    {
+        const std::string msg("Path is not a valid file");
+        throw Common::Exception(__FILE__, __LINE__, msg);
+    }
+
+    try
+    {
+        // Removes file
+        boost::filesystem::remove(path);
+    }
+    catch( boost::filesystem::filesystem_error & e )
+    {
+        const boost::system::error_code & errorCode = e.code();
+
+        // TODO - Add switch for meaningful codes, handle, and make manual error messages       
+        std::ostringstream msg;
+        msg << "boost::filesystem::remove failed with message: '" << (errorCode.message().empty() ? "<empty>" : errorCode.message()) << "'";
+        msg << " and error code: '" << errorCode << "'";
+
+        // Use our own exception type
+        throw Common::Exception(__FILE__, __LINE__, msg.str());
+    }
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -395,6 +299,223 @@ void DeleteDirectory(const std::wstring & path)
         // Use our own exception type
         throw Common::Exception(__FILE__, __LINE__, msg.str());
     }
+}
+
+//--------------------------------------------------------------------------------------------------
+void MoveFileOrDirectory(const std::string & sourcePath, const std::string destinationPath)
+{
+    if( IsFile(destinationPath) || IsDirectory(destinationPath) )
+    {
+        const std::string msg("Destination path already exists");
+        throw Common::Exception(__FILE__, __LINE__, msg);
+    }
+
+    try
+    {
+        // Moves/Renames source to destination
+        boost::filesystem::rename(sourcePath, destinationPath);
+    }
+    catch( boost::filesystem::filesystem_error & e )
+    {
+        const boost::system::error_code & errorCode = e.code();
+
+        // TODO - Add switch for meaningful codes, handle, and make manual error messages       
+        std::ostringstream msg;
+        msg << "boost::filesystem::rename failed with message: '" << (errorCode.message().empty() ? "<empty>" : errorCode.message()) << "'";
+        msg << " and error code: '" << errorCode << "'";
+
+        // Use our own exception type
+        throw Common::Exception(__FILE__, __LINE__, msg.str());
+    }
+}
+
+//--------------------------------------------------------------------------------------------------
+void MoveFileOrDirectory(const std::wstring & sourcePath, const std::wstring destinationPath)
+{
+    if( IsFile(destinationPath) || IsDirectory(destinationPath) )
+    {
+        const std::string msg("Destination path already exists");
+        throw Common::Exception(__FILE__, __LINE__, msg);
+    }
+
+    try
+    {
+        // Moves/Renames source to destination
+        boost::filesystem::rename(sourcePath, destinationPath);
+    }
+    catch( boost::filesystem::filesystem_error & e )
+    {
+        const boost::system::error_code & errorCode = e.code();
+
+        // TODO - Add switch for meaningful codes, handle, and make manual error messages       
+        std::ostringstream msg;
+        msg << "boost::filesystem::rename failed with message: '" << (errorCode.message().empty() ? "<empty>" : errorCode.message()) << "'";
+        msg << " and error code: '" << errorCode << "'";
+
+        // Use our own exception type
+        throw Common::Exception(__FILE__, __LINE__, msg.str());
+    }
+}
+
+//--------------------------------------------------------------------------------------------------
+size_t GetFileSize(const std::string & filePath)
+{
+    if( !IsFile(filePath) )
+    {
+        return 0;
+    }
+    else
+    {
+        return boost::filesystem::file_size(filePath);
+    }
+}
+
+//------------------------------------------------------------------------------
+const std::string GetFileOrDirectoryNameFromPath(const std::string & path)
+{
+    std::string fileOrDirectoryName;
+
+    // Check for windows slashes
+    std::string::size_type lastSlash = path.find_last_of('\\');
+
+    if( lastSlash != std::wstring::npos )
+    {
+        fileOrDirectoryName = path.substr(lastSlash + 1);
+        return fileOrDirectoryName;
+    }
+
+    // Check for other slashes
+    lastSlash = path.find_last_of('/');
+
+    if( lastSlash != std::wstring::npos )
+    {
+        fileOrDirectoryName = path.substr(lastSlash + 1);
+        return fileOrDirectoryName;
+    }
+
+    // There were no slashes at all
+    fileOrDirectoryName = path;
+    return fileOrDirectoryName;
+}
+
+//------------------------------------------------------------------------------
+const std::wstring GetFileOrDirectoryNameFromPath(const std::wstring & path)
+{
+    std::wstring fileOrDirectoryName;
+
+    // Check for windows slashes
+    std::wstring::size_type lastSlash = path.find_last_of('\\');
+
+    if( lastSlash != std::wstring::npos )
+    {
+        fileOrDirectoryName = path.substr(lastSlash + 1);
+        return fileOrDirectoryName;
+    }
+
+    // Check for other slashes
+    lastSlash = path.find_last_of('/');
+
+    if( lastSlash != std::wstring::npos )
+    {
+        fileOrDirectoryName = path.substr(lastSlash + 1);
+        return fileOrDirectoryName;
+    }
+
+    // There were no slashes at all
+    fileOrDirectoryName = path;
+    return fileOrDirectoryName;
+}
+
+//--------------------------------------------------------------------------------------------------
+std::string GetParentDirectoryFromPath(const std::string & path)
+{
+    if( path.empty() )
+    {
+        return std::string();
+    }
+
+    // Remove any trailing slashes
+    std::string cleanPath(path);
+
+    if( cleanPath.back() == '\\' ||
+        cleanPath.back() == '/' )
+    {
+        cleanPath.pop_back();
+    }
+
+    // Get the parent directory using boost
+    boost::filesystem::path boostPath(cleanPath);
+
+    if( !boostPath.has_parent_path() )
+    {
+        return std::string();
+    }
+
+    return boostPath.parent_path().string();
+}
+
+//--------------------------------------------------------------------------------------------------
+std::wstring GetParentDirectoryFromPath(const std::wstring & path)
+{
+    if( path.empty() )
+    {
+        return std::wstring();
+    }
+
+    // Remove any trailing slashes
+    std::wstring cleanPath(path);
+
+    if( cleanPath.back() == '\\' ||
+        cleanPath.back() == '/' )
+    {
+        cleanPath.pop_back();
+    }
+
+    // Get the parent directory using boost
+    boost::filesystem::path boostPath(cleanPath);
+
+    if( !boostPath.has_parent_path() )
+    {
+        return std::wstring();
+    }
+
+    return boostPath.parent_path().wstring();
+}
+
+//----------------------------------------------------------------------------
+const std::string GetFileExtensionFromPath(const std::string & path)
+{
+    std::string extension;
+
+    // Check for a dot
+    std::string::size_type lastSlash = path.find_last_of('.');
+
+    if( lastSlash != std::string::npos )
+    {
+        extension = path.substr(lastSlash + 1);
+        return extension;
+    }
+
+    // There was no dot
+    return extension;
+}
+
+//----------------------------------------------------------------------------
+const std::wstring GetFileExtensionFromPath(const std::wstring & path)
+{
+    std::wstring extension;
+
+    // Check for a dot
+    std::wstring::size_type lastSlash = path.find_last_of('.');
+
+    if( lastSlash != std::wstring::npos )
+    {
+        extension = path.substr(lastSlash + 1);
+        return extension;
+    }
+
+    // There was no dot
+    return extension;
 }
 
 //--------------------------------------------------------------------------------------------------

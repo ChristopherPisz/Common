@@ -8,6 +8,9 @@
 // GTest Includes
 #include <gtest/gtest.h>
 
+// Standard Includes
+#include <fstream>
+
 //--------------------------------------------------------------------------------------------------
 class FileAndDirectoryTests : public ::testing::Test
 {
@@ -41,7 +44,7 @@ TEST_F(FileAndDirectoryTests, GetParentDirectory)
     std::string result;
 
     const std::string emptyString;
-    EXPECT_EQ(emptyString, result = Common::GetParentDirectory(emptyString));
+    EXPECT_EQ(emptyString, result = Common::GetParentDirectoryFromPath(emptyString));
     
     std::string testPath1  = "C";
     std::string testPath2  = "C:\\";
@@ -49,22 +52,22 @@ TEST_F(FileAndDirectoryTests, GetParentDirectory)
     std::string testPath4  = "C:\\Windows\\system32";
     std::string testPath5  = "C:\\Windows\\system32\\";
 
-    EXPECT_EQ(emptyString, result = Common::GetParentDirectory(emptyString));
-    EXPECT_EQ(emptyString, result = Common::GetParentDirectory(testPath1));
-    EXPECT_EQ(emptyString, result = Common::GetParentDirectory(testPath2));
-    EXPECT_EQ(testPath2,   result = Common::GetParentDirectory(testPath3));
-    EXPECT_EQ(testPath3,   result = Common::GetParentDirectory(testPath4));
-    EXPECT_EQ(testPath3,   result = Common::GetParentDirectory(testPath5));
+    EXPECT_EQ(emptyString, result = Common::GetParentDirectoryFromPath(emptyString));
+    EXPECT_EQ(emptyString, result = Common::GetParentDirectoryFromPath(testPath1));
+    EXPECT_EQ(emptyString, result = Common::GetParentDirectoryFromPath(testPath2));
+    EXPECT_EQ(testPath2,   result = Common::GetParentDirectoryFromPath(testPath3));
+    EXPECT_EQ(testPath3,   result = Common::GetParentDirectoryFromPath(testPath4));
+    EXPECT_EQ(testPath3,   result = Common::GetParentDirectoryFromPath(testPath5));
 
     testPath2  = "C:/";
     testPath3  = "C:/Windows";
     testPath4  = "C:/Windows/system32";
     testPath5  = "C:/Windows/system32/";
 
-    EXPECT_EQ(emptyString, result = Common::GetParentDirectory(testPath2));
-    EXPECT_EQ(testPath2,   result = Common::GetParentDirectory(testPath3));
-    EXPECT_EQ(testPath3,   result = Common::GetParentDirectory(testPath4));
-    EXPECT_EQ(testPath3,   result = Common::GetParentDirectory(testPath5));
+    EXPECT_EQ(emptyString, result = Common::GetParentDirectoryFromPath(testPath2));
+    EXPECT_EQ(testPath2,   result = Common::GetParentDirectoryFromPath(testPath3));
+    EXPECT_EQ(testPath3,   result = Common::GetParentDirectoryFromPath(testPath4));
+    EXPECT_EQ(testPath3,   result = Common::GetParentDirectoryFromPath(testPath5));
 
     testPath1              = "\\";
     testPath2             = "\\Debug";
@@ -73,16 +76,16 @@ TEST_F(FileAndDirectoryTests, GetParentDirectory)
     testPath5              = "/Debug";
     std::string testPath6  = "/Debug/x86";
 
-    EXPECT_EQ(emptyString, result = Common::GetParentDirectory(testPath1));
-    EXPECT_EQ(testPath1,   result = Common::GetParentDirectory(testPath2));
-    EXPECT_EQ(testPath2,   result = Common::GetParentDirectory(testPath3));
-    EXPECT_EQ(emptyString, result = Common::GetParentDirectory(testPath4));
-    EXPECT_EQ(testPath4,   result = Common::GetParentDirectory(testPath5));
-    EXPECT_EQ(testPath5,   result = Common::GetParentDirectory(testPath6));
+    EXPECT_EQ(emptyString, result = Common::GetParentDirectoryFromPath(testPath1));
+    EXPECT_EQ(testPath1,   result = Common::GetParentDirectoryFromPath(testPath2));
+    EXPECT_EQ(testPath2,   result = Common::GetParentDirectoryFromPath(testPath3));
+    EXPECT_EQ(emptyString, result = Common::GetParentDirectoryFromPath(testPath4));
+    EXPECT_EQ(testPath4,   result = Common::GetParentDirectoryFromPath(testPath5));
+    EXPECT_EQ(testPath5,   result = Common::GetParentDirectoryFromPath(testPath6));
 
     testPath1  = "#?!NotAPath#?!";
     
-    EXPECT_EQ(emptyString, result = Common::GetParentDirectory(testPath1));
+    EXPECT_EQ(emptyString, result = Common::GetParentDirectoryFromPath(testPath1));
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -179,8 +182,8 @@ TEST_F(FileAndDirectoryTests, MakeDirectory)
 
     // Travel up two directories
     // We assume the orginal project settings for output directory and source locations
-    path = Common::GetParentDirectory(path);
-    path = Common::GetParentDirectory(path);
+    path = Common::GetParentDirectoryFromPath(path);
+    path = Common::GetParentDirectoryFromPath(path);
 
     // Make the directory
     std::string path1 = path  + "\\Unit Tests\\Temp";
@@ -200,5 +203,50 @@ TEST_F(FileAndDirectoryTests, MakeDirectory)
     // Delete the directory
     Common::DeleteDirectory(path1);
     EXPECT_FALSE(Common::IsDirectory(path1));
+}
+
+//--------------------------------------------------------------------------------------------------
+TEST_F(FileAndDirectoryTests, GetFileSize)
+{
+    std::string directoryPath = Common::GetModuleDirectoryA();
+
+    // Travel up two directories
+    // We assume the orginal project settings for output directory and source locations
+    directoryPath = Common::GetParentDirectoryFromPath(directoryPath);
+    directoryPath = Common::GetParentDirectoryFromPath(directoryPath);
+
+    // Make the directory
+    directoryPath = directoryPath + "\\Unit Tests\\Temp";
+    Common::MakeDirectory(directoryPath);
+
+    EXPECT_TRUE(Common::IsDirectory(directoryPath));
+    
+    // Create the file
+    std::string filePath = directoryPath + "\\GetFileSizeTest.txt";
+    std::ofstream file(filePath);
+
+    EXPECT_TRUE(file);
+    
+    file << "This line is 21 bytes";
+    file.close();
+
+    // Check the results
+    EXPECT_EQ(21, Common::GetFileSize(filePath));
+
+    // Append some to the file
+    file.open(filePath, std::ios::app);
+
+    EXPECT_TRUE(file);
+
+    file << "Here are 23 more bytes.";
+
+    file.close();
+
+    // Check the results
+    EXPECT_EQ(44, Common::GetFileSize(filePath));
+
+    // Delete the directory
+    Common::DeleteDirectory(directoryPath);
+    EXPECT_FALSE(Common::IsDirectory(directoryPath));
 }
 

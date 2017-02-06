@@ -46,10 +46,10 @@ public:
     const Exception & operator = (const Exception & rhs) = delete;
     ~Exception();
 
-    const std::string & GetFilePath();
-    unsigned int GetLine();
-    std::string GetReason();
-    const boost::posix_time::ptime & GetWhen();
+    const std::string & GetFilePath() const;
+    unsigned int GetLine() const;
+    std::string GetReason() const;
+    const boost::posix_time::ptime & GetWhen() const;
 
 protected:
 

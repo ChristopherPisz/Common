@@ -51,8 +51,8 @@ TEST_F(ExceptionTests, FilePathTest)
 
         // Travel up two directories
         // We assume the orginal project settings for output directory and source locations
-        expectedPath = Common::GetParentDirectory(expectedPath);
-        expectedPath = Common::GetParentDirectory(expectedPath);
+        expectedPath = Common::GetParentDirectoryFromPath(expectedPath);
+        expectedPath = Common::GetParentDirectoryFromPath(expectedPath);
 
         expectedPath += "\\Unit Tests\\ExceptionTest.cpp";
         std::transform(expectedPath.begin(), expectedPath.end(), expectedPath.begin(), ::tolower);

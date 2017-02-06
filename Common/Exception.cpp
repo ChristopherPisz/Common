@@ -35,25 +35,25 @@ Exception::~Exception()
 }
 
 //------------------------------------------------------------------------------
-const std::string & Exception::GetFilePath()
+const std::string & Exception::GetFilePath() const
 {
     return m_filePath;
 }
 
 //------------------------------------------------------------------------------
-unsigned int Exception::GetLine()
+unsigned int Exception::GetLine() const
 {
     return m_line;
 }
 
 //------------------------------------------------------------------------------
-std::string Exception::GetReason()
+std::string Exception::GetReason() const
 {
     return std::string(what());
 }
 
 //------------------------------------------------------------------------------
-const boost::posix_time::ptime & Exception::GetWhen()
+const boost::posix_time::ptime & Exception::GetWhen() const
 {
     return m_when;
 }
