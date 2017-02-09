@@ -75,7 +75,7 @@ std::wstring ReplaceAllOccurances(const std::wstring & source, const std::wstrin
     std::wstring result = source;
     size_t index = 0;
 
-    while ((index = result.find(a) != std::wstring::npos))
+    while ((index = result.find(a, index) != std::wstring::npos))
     {
         result.replace(index, a.size(), b);
         index += b.size();

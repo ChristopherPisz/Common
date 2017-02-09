@@ -371,7 +371,7 @@ size_t GetFileSize(const std::string & filePath)
 }
 
 //------------------------------------------------------------------------------
-const std::string GetFileOrDirectoryNameFromPath(const std::string & path)
+std::string GetFileOrDirectoryNameFromPath(const std::string & path)
 {
     std::string fileOrDirectoryName;
 
@@ -399,7 +399,7 @@ const std::string GetFileOrDirectoryNameFromPath(const std::string & path)
 }
 
 //------------------------------------------------------------------------------
-const std::wstring GetFileOrDirectoryNameFromPath(const std::wstring & path)
+std::wstring GetFileOrDirectoryNameFromPath(const std::wstring & path)
 {
     std::wstring fileOrDirectoryName;
 
@@ -483,7 +483,7 @@ std::wstring GetParentDirectoryFromPath(const std::wstring & path)
 }
 
 //----------------------------------------------------------------------------
-const std::string GetFileExtensionFromPath(const std::string & path)
+std::string GetFileExtensionFromPath(const std::string & path)
 {
     std::string extension;
 
@@ -501,7 +501,7 @@ const std::string GetFileExtensionFromPath(const std::string & path)
 }
 
 //----------------------------------------------------------------------------
-const std::wstring GetFileExtensionFromPath(const std::wstring & path)
+std::wstring GetFileExtensionFromPath(const std::wstring & path)
 {
     std::wstring extension;
 

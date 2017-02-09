@@ -176,6 +176,7 @@ xcopy /y /d "$(SolutionDir)..\..\Third Party\boost_1_62_0\lib64-msvc-14.0\boost_
   <ItemGroup>
     <ClCompile Include="ExceptionTest.cpp" />
     <ClCompile Include="FileAndDirectoryTest.cpp" />
+    <ClCompile Include="LoggerTests.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MathUtilityTests.cpp" />
     <ClCompile Include="StringUtilityTests.cpp" />

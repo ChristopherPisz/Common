@@ -13,9 +13,6 @@ namespace Common
 {
 
 //--------------------------------------------------------------------------------------------------
-Logger * Logger::m_instance = GetInstance();
-
-//--------------------------------------------------------------------------------------------------
 const std::string Logger::SeverityToString(const Logger::Severity severity)
 {
     static char * strings[] =
@@ -88,9 +85,10 @@ Logger::Logger()
 }
 
 //--------------------------------------------------------------------------------------------------
-Logger * Logger::GetInstance()
+Logger & Logger::GetInstance()
 {
-    return m_instance;
+    static Logger instance;
+    return instance;
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -112,6 +110,15 @@ const std::string Logger::GetFilePath() const
 void Logger::SetFilePath(const std::string & filePath)
 {
     m_filenamePrefix    = GetFileOrDirectoryNameFromPath(filePath);
+
+    // Strip the extension
+    std::wstring::size_type lastDot = m_filenamePrefix.find_last_of('.');
+
+    if( lastDot != std::wstring::npos )
+    {
+        m_filenamePrefix = m_filenamePrefix.substr(0, lastDot);
+    }
+
     m_directoryPath     = GetParentDirectoryFromPath(filePath);
     m_filenameExtension = GetFileExtensionFromPath(filePath);
 }
@@ -163,7 +170,7 @@ void Logger::SetMaxFileSize(const size_t maxFileSize)
 void Logger::Log(const std::string & message
                , const std::string & fileName /*= std::string()*/
                , const unsigned lineNumber /*= 0*/
-               , const boost::posix_time::ptime & time /*= boost::posix_time::ptime()*/
+               , const boost::posix_time::ptime & time /*= boost::posix_time::microsec_clock::local_time()*/
                , const Logger::Severity severity /*= Logger::Severity::UNKNOWN*/)
 {
     std::lock_guard<std::shared_mutex> lock(m_mutex);
@@ -178,7 +185,7 @@ void Logger::Log(const std::string & message
 
     // Attempt to open the log file
     std::ostringstream filePath;
-    filePath << m_directoryPath << m_filenamePrefix << m_filenameExtension;
+    filePath << m_directoryPath << "\\" << m_filenamePrefix << "." << m_filenameExtension;
 
     std::ofstream file(filePath.str(), std::ios::app);
     if( !file )
@@ -270,7 +277,7 @@ void Logger::Log(const Common::Exception & exception, const Logger::Severity sev
 void Logger::Log(const std::exception & exception
                , const std::string & fileName /*= std::string()*/
                , const unsigned lineNumber /*= 0*/
-               , const boost::posix_time::ptime & time /*= boost::posix_time::ptime()*/
+               , const boost::posix_time::ptime & time /*= boost::posix_time::microsec_clock::local_time()*/
                , const Logger::Severity severity /*= Logger::Severity::UNKNOWN*/)
 {
     Log(exception.what()

@@ -80,8 +80,8 @@ COMMON_API void MoveFileOrDirectory(const std::wstring & sourcePath, const std::
 /// <returns>
 /// The substring from the last forward or backward slash, if one exists, to the end of the string
 /// </returns>
-COMMON_API const std::string GetFileOrDirectoryNameFromPath(const std::string & path);
-COMMON_API const std::wstring GetFileOrDirectoryNameFromPath(const std::wstring & path);
+COMMON_API std::string GetFileOrDirectoryNameFromPath(const std::string & path);
+COMMON_API std::wstring GetFileOrDirectoryNameFromPath(const std::wstring & path);
 
 /// <summary>
 /// Gets the parent directory of a given path to a file or directory.
@@ -98,8 +98,8 @@ COMMON_API std::wstring GetParentDirectoryFromPath(const std::wstring & path);
 /// Gets the substring from last dot to, if one exists, to the end of the string.
 /// Otherwise returns empty string.
 /// </returns>
-COMMON_API const std::string GetFileExtensionFromPath(const std::string & path);
-COMMON_API const std::wstring GetFileExtensionFromPath(const std::wstring & path);
+COMMON_API std::string GetFileExtensionFromPath(const std::string & path);
+COMMON_API std::wstring GetFileExtensionFromPath(const std::wstring & path);
 
 /// <summary>
 /// Gets the size of a file in bytes

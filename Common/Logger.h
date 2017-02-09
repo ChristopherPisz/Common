@@ -55,7 +55,7 @@ public:
     /// <summary>
     /// Gets the one and only instance of this class
     /// </summary>
-    static Logger * GetInstance();
+    static Logger & GetInstance();
 
     /// <summary>
     /// Deconstructor
@@ -96,7 +96,7 @@ public:
     void Log(const std::string & message
            , const std::string & fileName = std::string()
            , const unsigned lineNumber = 0
-           , const boost::posix_time::ptime & time = boost::posix_time::ptime()
+           , const boost::posix_time::ptime & time = boost::posix_time::microsec_clock::local_time()
            , const Logger::Severity severity = Logger::Severity::UNKNOWN);
 
     /// <summary>
@@ -110,12 +110,10 @@ public:
     void Log(const std::exception & exception
            , const std::string & fileName = std::string()
            , const unsigned lineNumber = 0
-           , const boost::posix_time::ptime & time = boost::posix_time::ptime()
+           , const boost::posix_time::ptime & time = boost::posix_time::microsec_clock::local_time()
            , const Logger::Severity severity = Logger::Severity::UNKNOWN);
 
 private:
-
-    static Logger * m_instance;
 
     mutable std::shared_mutex m_mutex;
     Logger::Severity          m_severity;

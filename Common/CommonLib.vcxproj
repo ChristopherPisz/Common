@@ -156,6 +156,7 @@
   <ItemGroup>
     <ClInclude Include="BaseModalDialog.h" />
     <ClInclude Include="BaseWindow.h" />
+    <ClInclude Include="BoundedBuffer.hxx" />
     <ClInclude Include="CommonLib.h" />
     <ClInclude Include="Exception.h" />
     <ClInclude Include="FilesAndDirectories.h" />
