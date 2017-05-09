@@ -319,7 +319,7 @@ void Logger::RotateLogFiles()
         {
             logFilePath.str("");
             logFilePath.clear();
-            logFilePath << m_directoryPath << '\\' << m_filenamePrefix << '.' << index << '.' << m_filenameExtension;
+            logFilePath << m_directoryPath << '\\' << m_filenamePrefix << '_' << index << '.' << m_filenameExtension;
 
             if( IsFile(logFilePath.str()) )
             {
