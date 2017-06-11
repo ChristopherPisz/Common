@@ -73,14 +73,14 @@ const Logger::Severity Logger::StringToSeverity(const std::string & severity)
 //--------------------------------------------------------------------------------------------------
 Logger::Logger()
     :
-    m_severity(Logger::Severity::TRACE)
-  , m_directoryPath("")
-  , m_filenamePrefix("default")
-  , m_filenameExtension("log")
-  , m_lastRotationTime(boost::posix_time::second_clock::local_time())
+    m_severity            (Logger::Severity::TRACE)
+  , m_directoryPath       ("")
+  , m_filenamePrefix      ("default")
+  , m_filenameExtension   ("log")
+  , m_lastRotationTime    ()
   , m_timeBetweenRotations(24, 0, 0)
-  , m_maxFileSize(1024)
-  , m_maxFiles(20)
+  , m_maxFileSize         (1024)
+  , m_maxFiles            (20)
 {
 }
 
@@ -109,7 +109,7 @@ const std::string Logger::GetFilePath() const
 //--------------------------------------------------------------------------------------------------
 void Logger::SetFilePath(const std::string & filePath)
 {
-    m_filenamePrefix    = GetFileOrDirectoryNameFromPath(filePath);
+    m_filenamePrefix = GetFileOrDirectoryNameFromPath(filePath);
 
     // Strip the extension
     std::wstring::size_type lastDot = m_filenamePrefix.find_last_of('.');
@@ -149,7 +149,6 @@ void Logger::SetTimeBetweenRotations(const boost::posix_time::time_duration & ti
 {
     std::lock_guard<std::shared_mutex> lock(m_mutex);
     m_timeBetweenRotations = timeBetweenRotations;
-    m_lastRotationTime = boost::posix_time::second_clock::local_time();
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -296,12 +295,8 @@ void Logger::RotateLogFiles()
 
     size_t fileSize = GetFileSize(logFilePath.str());
 
-    if( m_lastRotationTime.is_not_a_date_time() )
-    {
-        m_lastRotationTime = boost::posix_time::second_clock::local_time();
-    }
-
-    if( m_lastRotationTime + m_timeBetweenRotations < boost::posix_time::second_clock::local_time() ||
+    if( m_lastRotationTime.is_not_a_date_time()                                                     ||
+        m_lastRotationTime + m_timeBetweenRotations < boost::posix_time::second_clock::local_time() ||
         m_maxFileSize < fileSize )
     {
         // Delete the oldest log file
@@ -342,6 +337,8 @@ void Logger::RotateLogFiles()
 
             MoveFileOrDirectory(logFilePath.str(), newLogFilePath.str());
         }
+
+        m_lastRotationTime = boost::posix_time::microsec_clock::local_time();
     }
 }
 

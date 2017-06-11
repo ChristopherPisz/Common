@@ -103,6 +103,12 @@ TEST_F(LoggerTests, LoggerThreadedTest)
     consumer3.join();
     producer1.join();
     producer2.join();
+
+    // TODO - Check the results
+
+    // Delete the directory
+    Common::DeleteDirectory(directoryPath);
+    EXPECT_FALSE(Common::IsDirectory(directoryPath));
 }
 
 //--------------------------------------------------------------------------------------------------
